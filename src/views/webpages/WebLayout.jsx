@@ -1,12 +1,17 @@
 import Navbar from "./inc/Navbar"
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
 
 
 function WebLayout() {
+   
     return (
         <>
             <Navbar />
-            <Outlet />
+            <div className="container">
+                <Outlet />
+            </div>
+
         </>
 
     )
