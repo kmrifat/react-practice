@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"
-import axios from "axios";
+import React, {useState, useEffect} from "react";
+import {useParams} from "react-router-dom"
+import axios from "/src/services/apiService";
 
 const useJobDetails = () => {
-    let { slug } = useParams()
+    let {slug} = useParams()
 
     let [job, setJob] = useState({
         job_contexts: []
     })
 
     let fetchJobDetails = () => {
-        axios.get(`https://hr.mediusware.xyz/api/job/${slug}/`).then(response => {
+        axios.get(`job/${slug}/`).then(response => {
             setJob(response.data)
         })
     }
@@ -19,7 +19,7 @@ const useJobDetails = () => {
         fetchJobDetails()
     }, [])
 
-    return { job, setJob, slug }
+    return {job, setJob, slug}
 
 }
 

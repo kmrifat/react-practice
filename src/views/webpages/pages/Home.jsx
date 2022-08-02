@@ -1,14 +1,14 @@
 import JobCard from "../../../components/JobCard"
-import axios from "axios"
-import { useEffect } from "react"
-import { useState } from "react"
+import axios from "/src/services/apiService"
+import {useEffect} from "react"
+import {useState} from "react"
 
 function Home() {
 
     let [jobs, setJob] = useState([])
 
     let fetchData = () => {
-        axios.get('https://hr.mediusware.xyz/api/jobs/').then(response => {
+        axios.get('jobs/').then(response => {
             setJob(response.data)
             console.log(response);
         })
@@ -21,7 +21,7 @@ function Home() {
 
     return (
         <div className="mt-4">
-            {jobs.map((element, index) => <JobCard job={element} key={index} />)}
+            {jobs.map((element, index) => <JobCard job={element} key={index}/>)}
         </div>
     )
 }
