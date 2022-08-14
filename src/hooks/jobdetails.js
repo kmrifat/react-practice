@@ -6,7 +6,8 @@ const useJobDetails = () => {
     let {slug} = useParams()
 
     let [job, setJob] = useState({
-        job_contexts: []
+        job_contexts: [],
+        additional_fields: []
     })
 
     let fetchJobDetails = () => {
