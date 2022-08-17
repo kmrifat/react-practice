@@ -2,13 +2,43 @@ import useJobDetails from "../../../hooks/jobdetails"
 import axios from "/src/services/apiService"
 import InputField from "../../../components/fields/InputField";
 import {useState} from "react";
+import {configureStore} from "@reduxjs/toolkit";
+import {setToken, tokenSlice} from "../../../store/index"
+
 
 function JobApply() {
+    const store = configureStore({
+        reducer: tokenSlice.reducer
+    })
+
+    store.dispatch({type: 'token/setToken', payload: 'Hello world'})
+
+    // console.log(store.getState().value.payload)
+    console.log(store.getState())
+
+    store.subscribe((val) => console.log(val))
+
     let {job, setJob} = useJobDetails()
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
-        cleanErrors()
+        resetErrors()
+        let registered = false
+        await register().then(response => {
+            registered = true
+        }).catch(error => {
+            resetErrors(error.response.data)
+        })
+
+        if (registered) {
+            await login().then(response => {
+
+                console.log(response.data)
+                // set data in store
+            })
+
+            await applyJob()
+        }
 
 
     }
@@ -18,7 +48,7 @@ function JobApply() {
         for (let key in values) {
             formData.append(key, values[key])
         }
-        formData.append('cv', cv)
+        // formData.append('cv', cv)
         return axios.post('register-candidate/', formData)
     }
 
@@ -32,10 +62,14 @@ function JobApply() {
         })
     }
 
-    const cleanErrors = () => {
+    const resetErrors = (errors = []) => {
         let newInputs = []
         for (let input of inputs) {
-            input.errors = []
+            if (errors[input.name]) {
+                input.errors = errors[input.name]
+            } else {
+                input.errors = []
+            }
             newInputs.push(input)
         }
         setInputs(newInputs)
@@ -55,6 +89,9 @@ function JobApply() {
             label: "Password", type: 'password', placeholder: 'Password', name: 'password', errors: []
         },
         {
+            label: "CV", type: "file", placeholder: "Attach CV", name: "cv", errors: []
+        },
+        {
             label: "Additional Message",
             type: 'text',
             placeholder: 'Additional Message',
@@ -72,13 +109,16 @@ function JobApply() {
 
 
     const [values, setValues] = useState({
-        email: '', full_name: '', phone: '', password: '', additional_message: '', expected_salary: ''
+        email: '', full_name: '', phone: '', password: '', additional_message: '', expected_salary: '', cv: ''
     })
 
-    const [cv, setCV] = useState('')
 
     const onChange = (e) => {
-        setValues({...values, [e.target.name]: e.target.value})
+        if (e.target.files) {
+            setValues({...values, [e.target.name]: e.target.files[0]})
+        } else {
+            setValues({...values, [e.target.name]: e.target.value})
+        }
     }
 
     return (<div className="row justify-content-center mt-3">
@@ -91,15 +131,10 @@ function JobApply() {
 
                     {
                         inputs.map((input, index) => (
-                            <InputField key={index} {...input} value={values[input.name]} onChange={onChange}/>
+                            input.type === 'file' ? <InputField key={index} {...input} onChange={onChange}/> :
+                                <InputField key={index} {...input} value={values[input.name]} onChange={onChange}/>
                         ))
                     }
-
-                    <div className="mb-3">
-                        <label htmlFor="">CV</label>
-                        <input type="file" name="cv" onChange={(e) => setCV(e.target.files[0])}
-                               className="form-control"/>
-                    </div>
 
                     {
                         job.additional_fields.map((additionalField, index) => (
