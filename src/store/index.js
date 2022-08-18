@@ -1,25 +1,11 @@
-import {createSlice, configureStore} from '@reduxjs/toolkit'
+import {configureStore} from '@reduxjs/toolkit'
+import tokenSlicer from "./auth/token";
+import activeUserSlicer from "./auth/activeUser";
 
-export const tokenSlice = createSlice({
-    name: 'token',
-    initialState: {
-        value: 0
+export default configureStore({
+
+    reducer: {
+        token: tokenSlicer,
+        activeUser: activeUserSlicer
     },
-    reducers: {
-        setToken: (state, payload) => {
-            state.value = payload
-        },
-
-        getToken: (state) => {
-            return state.value
-        },
-
-        removeToken: state => {
-            state.value = null
-        }
-    }
 })
-
-
-export const {setToken, removeToken} = tokenSlice.actions
-export default tokenSlice.reducer

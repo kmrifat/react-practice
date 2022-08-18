@@ -2,21 +2,14 @@ import useJobDetails from "../../../hooks/jobdetails"
 import axios from "/src/services/apiService"
 import InputField from "../../../components/fields/InputField";
 import {useState} from "react";
-import {configureStore} from "@reduxjs/toolkit";
-import {setToken, tokenSlice} from "../../../store/index"
+import {useDispatch, useSelector} from "react-redux";
+import {setToken} from "../../../store/auth/token";
 
 
 function JobApply() {
-    const store = configureStore({
-        reducer: tokenSlice.reducer
-    })
 
-    store.dispatch({type: 'token/setToken', payload: 'Hello world'})
-
-    // console.log(store.getState().value.payload)
-    console.log(store.getState())
-
-    store.subscribe((val) => console.log(val))
+    let token = useSelector((state) => state.token.value)
+    let dispatch = useDispatch()
 
     let {job, setJob} = useJobDetails()
 
@@ -26,15 +19,15 @@ function JobApply() {
         let registered = false
         await register().then(response => {
             registered = true
+
         }).catch(error => {
             resetErrors(error.response.data)
         })
 
         if (registered) {
             await login().then(response => {
-
                 console.log(response.data)
-                // set data in store
+                dispatch(setToken(response.data.token))
             })
 
             await applyJob()
@@ -48,7 +41,6 @@ function JobApply() {
         for (let key in values) {
             formData.append(key, values[key])
         }
-        // formData.append('cv', cv)
         return axios.post('register-candidate/', formData)
     }
 
@@ -58,7 +50,7 @@ function JobApply() {
 
     const applyJob = () => {
         return axios.post('api/apply/', {job_slug: job.slug}, {
-            headers: {'Authorization': `Bearer `}
+            headers: {'Authorization': `Bearer ${token}`}
         })
     }
 
