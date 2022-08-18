@@ -49,7 +49,11 @@ function JobApply() {
     }
 
     const applyJob = () => {
-        return axios.post('api/apply/', {job_slug: job.slug}, {
+        return axios.post('api/apply/', {
+            job_slug: job.slug,
+            expected_salary: values.expected_salary,
+            additional_message: values.additional_message
+        }, {
             headers: {'Authorization': `Bearer ${token}`}
         })
     }
