@@ -1,6 +1,14 @@
+import SideBar from "./inc/Navbar";
+import {Outlet} from "react-router-dom";
+
 function AppLayout() {
     return (
-        <h1>App Layout</h1>
+        <main className="d-flex flex-nowrap">
+            <SideBar></SideBar>
+            <div>
+                <Outlet/>
+            </div>
+        </main>
     )
 }
 

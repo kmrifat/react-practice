@@ -7,6 +7,7 @@ import JobApply from "./views/webpages/pages/apply/JobApply";
 import JobApplySuccess from "./views/webpages/pages/apply/JobApplySuccess";
 import AppLayout from "./views/dashboard/AppLayout";
 import {useEffect} from "react";
+import Dashboard from "./views/dashboard/pages/Dashboard";
 
 
 function App() {
@@ -21,7 +22,9 @@ function App() {
                 <Route path='/job-apply/:slug' element={<JobApply/>}/>
                 <Route path='/job-apply-success' element={<JobApplySuccess/>}/>
             </Route>
-            <Route path="/dashboard" element={<AppLayout/>}/>
+            <Route path="/dashboard" element={<AppLayout/>}>
+                <Route index element={<Dashboard/>}/>
+            </Route>
         </Routes>
 
     )
